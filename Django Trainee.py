@@ -1,0 +1,49 @@
+#Topic - Django Signals
+"""
+1.Synchronous Execution: The handle_rectangle_save function runs synchronously. The time.sleep(2) simulates a delay, and you will see the output in the console in the order of operations. The calculations and messages will appear sequentially because Django processes signals synchronously by default.
+
+2.Same Thread Execution: Since rect.save() is called in the same thread, the signal handler handle_rectangle_save runs in the same thread. The print statements will show that the handler runs in the same context.
+
+3.Same Transaction Handling: By using transaction.atomic(), the creation and saving of the Rectangle instance are done within the same database transaction. If there were any database changes, they would be committed or rolled back together, ensuring that the signal operates within the same transaction context."""
+
+
+"""from django.db import models, transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import time
+
+# Define the Rectangle model
+class Rectangle(models.Model):
+    length = models.FloatField()
+    width = models.FloatField()
+
+# Define the signal handler
+@receiver(post_save, sender=Rectangle)
+def handle_rectangle_save(sender, instance):
+    print("Calculating area...")
+    area = instance.length * instance.width
+    print(f"Area: {area}")
+    time.sleep(2)  # Simulate a delay
+    print("Area calculation done")
+
+# Example usage
+# In a Django shell or view
+from .models import Rectangle
+
+# Create and save a Rectangle instance within a transaction
+with transaction.atomic():
+    rect = Rectangle(length=5, width=3)
+    rect.save()  # This triggers the signal handler"""
+
+
+#Topic - Custom Classes in Python
+class Rectangle:
+    def __init__(self, length, width):
+        self.length = length
+        self.width = width
+    def print_dimensions(self):
+        print({"length": self.length})
+        print({"width": self.width})
+rect = Rectangle(50, 25)
+rect.print_dimensions()
+
